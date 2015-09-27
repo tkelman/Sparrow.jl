@@ -16,16 +16,17 @@ type PlotFrame
 	ylim::Vector{Float64}
 	legendInside::Bool
 	showLegend::Bool
+	legendPos::String
 	topAxis::Bool
 	leftAxis::Bool
 	bottomAxis::Bool
 	rightAxis::Bool
 end
 
-PlotFrame() = PlotFrame(LinePlot(), "sparrow", "open", PageSize(12, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], false, false, true, true, true, true)
-PlotFrame(name::String) = PlotFrame(LinePlot(), name, "open", PageSize(12, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], false, false, true, true, true, true)
-PlotFrame(graphType::Graph) = PlotFrame(graphType, "sparrow", "open", PageSize(12, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], false, false, true, true, true, true)
-PlotFrame(name::String, graphType::Graph) = PlotFrame(graphType, name, "open", PageSize(12, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], false, false, true, true, true, true)
+PlotFrame() = PlotFrame(LinePlot(), "sparrow", "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
+PlotFrame(name::String) = PlotFrame(LinePlot(), name, "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
+PlotFrame(graphType::Graph) = PlotFrame(graphType, "sparrow", "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
+PlotFrame(name::String, graphType::Graph) = PlotFrame(graphType, name, "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
 
 # function PlotFrame()
 #	viewer = []

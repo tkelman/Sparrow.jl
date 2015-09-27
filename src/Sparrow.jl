@@ -1,4 +1,4 @@
-VERSION >= v"0.4.0-dev+6521" && __precompile__()
+# VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module Sparrow
 
@@ -19,6 +19,7 @@ catch
 end
 
 scriptF = sparrowD*"sparrow.ct2"
+global dgCount = 0
 
 abstract Graph
 
@@ -40,7 +41,7 @@ function plot(p::PlotFrame)
 	println(fid, "ylabel "*p.ylabel)
 
 	if p.legendInside
-		println(fid, "legend-inside tr")
+		println(fid, "legend-inside "*p.legendPos)
 	end
 
 	findGraphLimits(p)
@@ -48,26 +49,28 @@ function plot(p::PlotFrame)
 	println(fid, "xrange $(p.xlim[1]):$(p.xlim[2])")
 	println(fid, "yrange $(p.ylim[1]):$(p.ylim[2])")
 
-	if !p.topAxis
+	if p.topAxis
+		println(fid, "top major-num")
+	else
 		println(fid, "top off")
-	else
 	end
 
-	if !p.leftAxis
+	if p.leftAxis
+		println(fid, "left major-num")
+	else
 		println(fid, "left off")
-	else
-		# println(fid, "left major-num")
 	end
 
-	if !p.bottomAxis
+	if p.bottomAxis
+		println(fid, "bottom major-num")
+	else
 		println(fid, "bottom off")
-	else
-		# println(fid, "bottom major-num")
 	end
 
-	if !p.rightAxis
-		println(fid, "right off")
+	if p.rightAxis
+		println(fid, "right major-num")
 	else
+		println(fid, "right off")
 	end
 
 	plotData(p.graphType, p.showLegend, fid)

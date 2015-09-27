@@ -5,6 +5,8 @@ end
 LinePlot(dg::DataGroup) = LinePlot([dg])
 
 function plotData(g::LinePlot, showLegend::Bool, fid)
+	global dgCount
+
 	for x in 1:length(g.dataGroups)
 		dg = g.dataGroups[x]
 		if dg.lineColor == "blank"
@@ -28,7 +30,12 @@ function plotData(g::LinePlot, showLegend::Bool, fid)
 		println(fid, "marker-scale $(dg.markerScale[2])")
 		println(fid, "error-bar-line-width $(dg.errorLineWidth)")
 		if showLegend
-			println(fid, "legend "*dg.legend.label)
+			dgCount += 1
+			if dg.legend.label == "\'Data Group \'"
+				println(fid, "legend "*dg.legend.label*string(dgCount))
+			else
+				println(fid, "legend "*dg.legend.label)
+			end
 		end
 
 		push!(dataFs, sparrowD*"data.sparrow"*randstring(5))

@@ -6,7 +6,8 @@ function findGraphLimits(p::PlotFrame)
 			xmin = min(xmin, minimum(dg.data[:x]))
 			xmax = max(xmax, maximum(dg.data[:x]))
 		end
-		p.xlim = [xmin-0.1, xmax+0.1]
+		xrange = xmax - xmin
+		p.xlim = [xmin-0.1*xrange, xmax+0.1*xrange]
 	end
 
 	if length(find(map(isnan, p.ylim))) == length(p.ylim)
@@ -16,6 +17,7 @@ function findGraphLimits(p::PlotFrame)
 			ymin = min(ymin, minimum(dg.data[:y]))
 			ymax = max(ymax, maximum(dg.data[:y]))
 		end
-		p.ylim = [ymin-0.1, ymax+0.1]
+		yrange = ymax - ymin
+		p.ylim = [ymin-0.1*yrange, ymax+0.1*yrange]
 	end
 end
