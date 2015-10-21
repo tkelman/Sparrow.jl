@@ -2,11 +2,11 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module Sparrow
 
-using Compat, DataFrames, Color
+using Compat, DataFrames, Colors
 
 export DataGroup, PlotFrame, Legend, PageSize
-export LinePlot
-export plot, lineplot
+export LinePlot, XYZMap, HistPlot
+export plot, lineplot, xyzmap, histplot
 
 scriptF = []; dataFs = String[]; sparrowD = []
 
