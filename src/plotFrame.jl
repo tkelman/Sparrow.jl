@@ -5,9 +5,8 @@ type PageSize
 end
 
 type PlotFrame
-	graphType::Graph
+	wi::Int
 	name::String
-	viewer::String
 	size::PageSize
 	title::String
 	xlabel::String
@@ -23,14 +22,14 @@ type PlotFrame
 	rightAxis::Bool
 end
 
-PlotFrame() = PlotFrame(LinePlot(), "sparrow", "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
-PlotFrame(name::String) = PlotFrame(LinePlot(), name, "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
-PlotFrame(graphType::Graph) = PlotFrame(graphType, "sparrow", "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
-PlotFrame(name::String, graphType::Graph) = PlotFrame(graphType, name, "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
+function PlotFrame(name::AbstractString, width, height)
+	w = p2d.screen(width, height)
+	p2d.createFont(w, "Courier", 20*(width/500))
+	p2d.background(w, 1.0, 1.0, 1.0, 1.0)
 
-# function PlotFrame()
-#	viewer = []
-#	@osx? viewer = "open" : nothing
+	return PlotFrame(w, name, PageSize(9, 9, "cm"), "", "x", "y", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
+end
 
-#	return PlotFrame("sparrow", viewer, [0.7, 0.7], PageSize(12, 9, "cm"), "\'\'", "\'\$x\$\'", "\'\$y\$\'", [NaN, NaN], [NaN, NaN])
-# end
+PlotFrame(width, height) = PlotFrame("sparrow", width, height)
+PlotFrame(s) = PlotFrame("sparrow", s, s)
+PlotFrame() = PlotFrame("sparrow", 400, 400)

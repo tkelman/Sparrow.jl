@@ -1,8 +1,8 @@
-function findGraphLimits(p::PlotFrame)
+function findGraphLimits(p::PlotFrame, g::Graph)
 	if length(find(map(isnan, p.xlim))) == length(p.xlim)
 		xmin = Inf
 		xmax = -Inf
-		for dg in p.graphType.dataGroups
+		for dg in g.dataGroups
 			xmin = min(xmin, minimum(dg.data[:x]))
 			xmax = max(xmax, maximum(dg.data[:x]))
 		end
@@ -13,7 +13,7 @@ function findGraphLimits(p::PlotFrame)
 	if length(find(map(isnan, p.ylim))) == length(p.ylim)
 		ymin = Inf
 		ymax = -Inf
-		for dg in p.graphType.dataGroups
+		for dg in g.dataGroups
 			ymin = min(ymin, minimum(dg.data[:y]))
 			ymax = max(ymax, maximum(dg.data[:y]))
 		end

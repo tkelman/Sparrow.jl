@@ -2,23 +2,15 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module Sparrow
 
-using Compat, DataFrames, Colors
+using DataFrames, Colors, Cairo
+# include(Pkg.dir()*"/Processing.jl/src/Processing2D.jl")
+include("/Users/rje/Documents/Processing.jl/src/Processing2D.jl")
+const p2d = Processing2D
 
 export DataGroup, PlotFrame, Legend, PageSize
-export LinePlot, XYZMap, HistPlot
-export plot, lineplot, xyzmap, histplot
+export LinePlot, ScatterPlot, XYZMap, HistPlot
+export plot, lineplot, scatterplot, xyzmap, histplot
 
-scriptF = []; dataFs = String[]; sparrowD = []
-
-try
-	sparrowD = string("/tmp/sparrow-",ENV["USER"],"-",randstring(5),"/")
-	mkdir(sparrowD)
-catch
-	sparrowD = string(replace(ENV["TMP"],"\\","/"),"/sparrow-",ENV["USERNAME"],"-",randstring(5),"/")
-	mkdir(sparrowD)
-end
-
-scriptF = sparrowD*"sparrow.ct2"
 global dgCount = 0
 
 abstract Graph
@@ -29,61 +21,40 @@ include("plotFrame.jl")
 include("datagroup.jl")
 include("aux.jl")
 include("lineplot.jl")
+include("scatterplot.jl")
 
-function plot(p::PlotFrame)
-	fid = open(scriptF, "w+")
-
-	println(fid, "name "*p.name)
-	println(fid, "viewer "*p.viewer)
-	println(fid, "page-size $(p.size.xscale)$(p.size.units)x$(p.size.yscale)$(p.size.units)")
-	println(fid, "title "*p.title)
-	println(fid, "xlabel "*p.xlabel)
-	println(fid, "ylabel "*p.ylabel)
-
-	if p.legendInside
-		println(fid, "legend-inside "*p.legendPos)
+function plot(p::PlotFrame, gs::Array{Graph})
+	findGraphLimits(p, gs[1])
+	for g in gs
+		plotData(p, g, p.showLegend)
 	end
-
-	findGraphLimits(p)
-
-	println(fid, "xrange $(p.xlim[1]):$(p.xlim[2])")
-	println(fid, "yrange $(p.ylim[1]):$(p.ylim[2])")
-
-	if p.topAxis
-		println(fid, "top major-num")
-	else
-		println(fid, "top off")
-	end
-
-	if p.leftAxis
-		println(fid, "left major-num")
-	else
-		println(fid, "left off")
-	end
-
-	if p.bottomAxis
-		println(fid, "bottom major-num")
-	else
-		println(fid, "bottom off")
-	end
-
-	if p.rightAxis
-		println(fid, "right major-num")
-	else
-		println(fid, "right off")
-	end
-
-	plotData(p.graphType, p.showLegend, fid)
-
-	close(fid)
-	run(`ctioga2 -f $(scriptF)`)
-
-	rm(scriptF)
-	for dataF in dataFs
-		rm(dataF)
-	end
+	p2d.animate(p.wi)
 end
 
-plot(p::PlotFrame, dg::DataGroup) = plot(p, [dg])
+function plot(p::PlotFrame, g::Graph)
+	findGraphLimits(p, g)
+	plotData(p, g, p.showLegend)
+	p2d.animate(p.wi)
+end
+
+function print(p::PlotFrame, gs::Array{Graph}, fn::AbstractString)
+	p2d.PDFContext(p.wi, fn)
+	findGraphLimits(p, gs[1])
+	for g in gs
+		plotData(p, g, p.showLegend)
+	end
+	Cairo.show_page(p2d.contexts[p.wi])
+	Cairo.finish(p2d.surfaces[p.wi])
+	p2d.popContext(p.wi)
+end
+
+function print(p::PlotFrame, g::Graph, fn::AbstractString)
+	p2d.PDFContext(p.wi, fn)
+	findGraphLimits(p, g)
+	plotData(p, g, p.showLegend)
+	Cairo.show_page(p2d.contexts[p.wi])
+	Cairo.finish(p2d.surfaces[p.wi])
+	p2d.popContext(p.wi)
+end
 
 end
