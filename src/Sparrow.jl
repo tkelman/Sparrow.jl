@@ -65,4 +65,8 @@ function print(p::PlotFrame, g::Graph, fn::AbstractString)
 	p2d.popContext(p.wi)
 end
 
+function close(p::PlotFrame)
+	p2d.endDrawing(p.wi)
+end
+
 end
