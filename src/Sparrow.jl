@@ -23,26 +23,32 @@ include("aux.jl")
 include("lineplot.jl")
 include("scatterplot.jl")
 
-function plot(p::PlotFrame, gs::Array{Graph})
-	findGraphLimits(p, gs[1])
+function plot{T<:Graph}(p::PlotFrame, gs::Array{T})
+	findGraphLimits(p, gs)
 	for g in gs
 		plotData(p, g, p.showLegend)
 	end
+	drawAxisLabels(p)
+	drawTicks(p)
 	p2d.animate(p.wi)
 end
 
 function plot(p::PlotFrame, g::Graph)
 	findGraphLimits(p, g)
 	plotData(p, g, p.showLegend)
+	drawAxisLabels(p)
+	drawTicks(p)
 	p2d.animate(p.wi)
 end
 
-function print(p::PlotFrame, gs::Array{Graph}, fn::AbstractString)
+function print{T<:Graph}(p::PlotFrame, gs::Array{T}, fn::AbstractString)
 	p2d.PDFContext(p.wi, fn)
-	findGraphLimits(p, gs[1])
+	findGraphLimits(p, gs)
 	for g in gs
 		plotData(p, g, p.showLegend)
 	end
+	drawAxisLabels(p)
+	drawTicks(p)
 	Cairo.show_page(p2d.contexts[p.wi])
 	Cairo.finish(p2d.surfaces[p.wi])
 	p2d.popContext(p.wi)
@@ -52,6 +58,8 @@ function print(p::PlotFrame, g::Graph, fn::AbstractString)
 	p2d.PDFContext(p.wi, fn)
 	findGraphLimits(p, g)
 	plotData(p, g, p.showLegend)
+	drawAxisLabels(p)
+	drawTicks(p)
 	Cairo.show_page(p2d.contexts[p.wi])
 	Cairo.finish(p2d.surfaces[p.wi])
 	p2d.popContext(p.wi)
