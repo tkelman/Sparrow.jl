@@ -60,11 +60,11 @@ function plotPoints(p, dg)
 		p2d.fill(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
 		p2d.ellipse(p.wi, ex, ey, 3.5, 3.5)
 	end
+	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+	p2d.fill(p.wi, 0, 0, 0, 1.0)
 end
 
 function plotCurve(p, dg)
-	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
-
 	xmin = p.xlim[1]; xmax = p.xlim[2]
 	ymin = p.ylim[1]; ymax = p.ylim[2]
 
@@ -77,10 +77,12 @@ function plotCurve(p, dg)
 		p2d.stroke(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
 		p2d.line(p.wi, lx1, ly1, lx2, ly2)
 	end
+	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
 end
 
 function drawAxisLabels(w, title, xlabel, ylabel, width, height, abxb, abxe, aby, orx, orye)
 	p2d.stroke(w, 0.0, 0.0, 0.0, 1.0)
+	p2d.fill(w, 0.0, 0.0, 0.0, 1.0)
 
 	# title
 	p2d.text(w, title, width/2, 0.0727*height)
@@ -100,6 +102,7 @@ end
 
 function drawAxisLabels(p::PlotFrame)
 	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+	p2d.fill(p.wi, 0.0, 0.0, 0.0, 1.0)
 
 	# title
 	p2d.text(p.wi, p.title, p.wpx/2, 0.0727*p.hpx)
@@ -119,6 +122,7 @@ end
 
 function drawTicks(p)
 	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+	p2d.fill(p.wi, 0.0, 0.0, 0.0, 1.0)
 
 	xmin = p.xlim[1]; xmax = p.xlim[2]
 	ymin = p.ylim[1]; ymax = p.ylim[2]
