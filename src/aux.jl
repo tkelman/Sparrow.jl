@@ -74,6 +74,7 @@ function plotCurve(p, dg)
 		ly1 = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
 		lx2 = (dg.data[:x][c+1] - xmin)/(xmax - xmin)*p.plen + p.abxb
 		ly2 = -((dg.data[:y][c+1] - ymin)/(ymax - ymin)*p.phei - p.aby)
+		p2d.stroke(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
 		p2d.line(p.wi, lx1, ly1, lx2, ly2)
 	end
 end
