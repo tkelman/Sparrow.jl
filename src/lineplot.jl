@@ -29,7 +29,9 @@ function plotData(p::PlotFrame, g::LinePlot, showLegend::Bool)
 		end
 
 		plotCurve(p, dg)
-		plotPoints(p, dg)
+		if dg.plotPoints
+			plotPoints(p, dg)
+		end
 	end
 end
 
