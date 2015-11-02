@@ -5,9 +5,8 @@ type PageSize
 end
 
 type PlotFrame
-	graphType::Graph
+	wi::Int
 	name::String
-	viewer::String
 	size::PageSize
 	title::String
 	xlabel::String
@@ -21,16 +20,35 @@ type PlotFrame
 	leftAxis::Bool
 	bottomAxis::Bool
 	rightAxis::Bool
+	wpx::Float64
+	hpx::Float64
+	abxb::Float64
+	abxe::Float64
+	aby::Float64
+	oryb::Float64
+	orye::Float64
+	orx::Float64
+	plen::Float64
+	phei::Float64
 end
 
-PlotFrame() = PlotFrame(LinePlot(), "sparrow", "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
-PlotFrame(name::String) = PlotFrame(LinePlot(), name, "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
-PlotFrame(graphType::Graph) = PlotFrame(graphType, "sparrow", "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
-PlotFrame(name::String, graphType::Graph) = PlotFrame(graphType, name, "open", PageSize(9, 9, "cm"), "\'\'", "\'x\'", "\'y\'", [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false)
+function PlotFrame(name::AbstractString, title, xlabel, ylabel, width, height)
+	w = p2d.screen(width, height)
+	p2d.createFont(w, "Arial", 13*(width/500))
+	p2d.background(w, 1.0, 1.0, 1.0, 1.0)
 
-# function PlotFrame()
-#	viewer = []
-#	@osx? viewer = "open" : nothing
+	abxb = 0.18*width; abxe = 0.96*width
+	orx = 0.16*width; aby = 0.84*height
+	orye = 0.055*height
 
-#	return PlotFrame("sparrow", viewer, [0.7, 0.7], PageSize(12, 9, "cm"), "\'\'", "\'\$x\$\'", "\'\$y\$\'", [NaN, NaN], [NaN, NaN])
-# end
+	plen = abxe - abxb
+	phei = aby - orye
+
+	drawAxisLabels(w, title, xlabel, ylabel, width, height, abxb, abxe, aby, orx, orye, plen, phei)
+
+	return PlotFrame(w, name, PageSize(9, 9, "cm"), title, xlabel, ylabel, [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false, width, height, abxb, abxe, aby, aby, orye, orx, plen, phei)
+end
+
+PlotFrame(width, height) = PlotFrame("sparrow", "", "x", "y", width, height)
+PlotFrame(s) = PlotFrame("sparrow", "", "x", "y", s, s)
+PlotFrame() = PlotFrame("sparrow", "", "x", "y", 400, 400)

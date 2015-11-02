@@ -1,10 +1,10 @@
-type LinePlot <: Graph
+type ScatterPlot <: Graph
 	dataGroups::Vector{DataGroup}
 end
 
-LinePlot(dg::DataGroup) = LinePlot([dg])
+ScatterPlot(dg::DataGroup) = ScatterPlot([dg])
 
-function plotData(p::PlotFrame, g::LinePlot, showLegend::Bool)
+function plotData(p::PlotFrame, g::ScatterPlot, showLegend::Bool)
 	global dgCount
 
 	for x in 1:length(g.dataGroups)
@@ -21,10 +21,7 @@ function plotData(p::PlotFrame, g::LinePlot, showLegend::Bool)
 			dg.markerType = goodSymbols[mod(x, length(goodSymbols))]
 		end
 
-		plotCurve(p, dg)
-		if dg.plotPoints
-			plotPoints(p, dg)
-		end
+		plotPoints(p, dg)
 
 		if showLegend
 			dgCount += 1
@@ -35,46 +32,46 @@ function plotData(p::PlotFrame, g::LinePlot, showLegend::Bool)
 	end
 end
 
-function lineplot(dgs::Vector{DataGroup})
-	plot(PlotFrame(LinePlot(dgs)))
+function scatterplot(dgs::Vector{DataGroup})
+	plot(PlotFrame(ScatterPlot(dgs)))
 end
 
-function lineplot(dg::DataGroup)
-	plot(PlotFrame(LinePlot(dg)))
+function scatterplot(dg::DataGroup)
+	plot(PlotFrame(ScatterPlot(dg)))
 end
 
-function lineplot(dfs::Vector{DataFrame})
+function scatterplot(dfs::Vector{DataFrame})
 	dgs = DataGroup[]
 	for df in dfs
 		push!(dgs, DataGroup(df))
 	end
-	lineplot(dgs)
+	scatterplot(dgs)
 end
 
-function lineplot(df::DataFrame)
-	lineplot(DataGroup(df))
+function scatterplot(df::DataFrame)
+	scatterplot(DataGroup(df))
 end
 
-function lineplot(ys::Array{Float64, 2})
+function scatterplot(ys::Array{Float64, 2})
 	dfs = DataFrame[]
 	for r = 1:size(y, 1)
 		push!(dfs, DataFrame(x = collect(1:length(y)), y = y[r,:]))
 	end
-	lineplot(dfs)
+	scatterplot(dfs)
 end
 
-function lineplot(xs::Array{Float64, 2}, ys::Array{Float64, 2})
+function scatterplot(xs::Array{Float64, 2}, ys::Array{Float64, 2})
 	dfs = DataFrame[]
 	for r = 1:size(y, 1)
 		push!(dfs, DataFrame(x = x[r,:], y = y[r,:]))
 	end
-	lineplot(dfs)
+	scatterplot(dfs)
 end
 
-function lineplot(xs::Array{Float64, 2}, ys::Array{Float64, 2}, yerrs::Array{Float64, 2})
+function scatterplot(xs::Array{Float64, 2}, ys::Array{Float64, 2}, yerrs::Array{Float64, 2})
 	dfs = DataFrame[]
 	for r = 1:size(ys, 1)
 		push!(dfs, DataFrame(x = vec(xs[r,:]), y = vec(ys[r,:]), yerr = vec(yerrs[r,:])))
 	end
-	lineplot(dfs)
+	scatterplot(dfs)
 end
