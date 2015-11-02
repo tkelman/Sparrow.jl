@@ -1,5 +1,4 @@
-# using Sparrow, DataFrames
-include("/Users/rje/Documents/Sparrow.jl/src/Sparrow.jl"); using DataFrames
+using Sparrow, DataFrames
 
 d = DataFrame(x = [0:0.1:30], y = sin([0:0.1:30]), rc = sin([0:0.1:30])./2 .+ 0.5, gc = zeros(length([0:0.1:30])), bc = zeros(length([0:0.1:30])))
 g = Sparrow.DataGroup(d)
