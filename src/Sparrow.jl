@@ -25,30 +25,46 @@ include("scatterplot.jl")
 
 function plot{T<:Graph}(p::PlotFrame, gs::Array{T})
 	findGraphLimits(p, gs)
+	drawAxisLabels(p)
+	drawTicks(p)
 	for g in gs
 		plotData(p, g, p.showLegend)
 	end
-	drawAxisLabels(p)
-	drawTicks(p)
+
+	if p.showLegend
+		drawLegend(p, gs)
+	end
+
 	p2d.animate(p.wi)
 end
 
 function plot(p::PlotFrame, g::Graph)
 	findGraphLimits(p, g)
-	plotData(p, g, p.showLegend)
 	drawAxisLabels(p)
 	drawTicks(p)
+	plotData(p, g, p.showLegend)
+
+	if p.showLegend
+		drawLegend(p, g)
+	end
+
 	p2d.animate(p.wi)
 end
 
 function print{T<:Graph}(p::PlotFrame, gs::Array{T}, fn::AbstractString)
 	p2d.PDFContext(p.wi, fn)
+	p2d.createFont(p.wi, "Arial", 13*(p.wpx/500))
 	findGraphLimits(p, gs)
+	drawAxisLabels(p)
+	drawTicks(p)
 	for g in gs
 		plotData(p, g, p.showLegend)
 	end
-	drawAxisLabels(p)
-	drawTicks(p)
+
+	if p.showLegend
+		drawLegend(p, gs)
+	end
+
 	Cairo.show_page(p2d.contexts[p.wi])
 	Cairo.finish(p2d.surfaces[p.wi])
 	p2d.popContext(p.wi)
@@ -56,10 +72,16 @@ end
 
 function print(p::PlotFrame, g::Graph, fn::AbstractString)
 	p2d.PDFContext(p.wi, fn)
+	p2d.createFont(p.wi, "Arial", 13*(p.wpx/500))
 	findGraphLimits(p, g)
-	plotData(p, g, p.showLegend)
 	drawAxisLabels(p)
 	drawTicks(p)
+	plotData(p, g, p.showLegend)
+
+	if p.showLegend
+		drawLegend(p, g)
+	end
+
 	Cairo.show_page(p2d.contexts[p.wi])
 	Cairo.finish(p2d.surfaces[p.wi])
 	p2d.popContext(p.wi)

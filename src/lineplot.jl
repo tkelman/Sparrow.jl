@@ -21,16 +21,16 @@ function plotData(p::PlotFrame, g::LinePlot, showLegend::Bool)
 			dg.markerType = goodSymbols[mod(x, length(goodSymbols))]
 		end
 
+		plotCurve(p, dg)
+		if dg.plotPoints
+			plotPoints(p, dg)
+		end
+
 		if showLegend
 			dgCount += 1
 			if dg.legend.label == "Data Group "
 				dg.legend.label = dg.legend.label*string(dgCount)
 			end
-		end
-
-		plotCurve(p, dg)
-		if dg.plotPoints
-			plotPoints(p, dg)
 		end
 	end
 end

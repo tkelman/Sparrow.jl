@@ -47,51 +47,70 @@ function findGraphLimits{T<:Graph}(p::PlotFrame, gs::Array{T})
 end
 
 function plotPoints(p, dg)
-	p2d.stroke(p.wi, 1.0, 1.0, 1.0, 1.0)
-	p2d.fill(p.wi, 0, 0, 0, 1.0)
-
 	xmin = p.xlim[1]; xmax = p.xlim[2]
 	ymin = p.ylim[1]; ymax = p.ylim[2]
 
-	# data points
-	for c = 1:length(dg.data[:x])
-		ex = (dg.data[:x][c] - xmin)/(xmax - xmin)*p.plen + p.abxb
-		ey = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
-		p2d.fill(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
-		p2d.ellipse(p.wi, ex, ey, 3.5, 3.5)
+	p2d.stroke(p.wi, 1.0, 1.0, 1.0, 0.0)
+
+	# data points w/ colors
+	if in(:rc, names(dg.data))
+		for c = 1:length(dg.data[:x])
+			ex = (dg.data[:x][c] - xmin)/(xmax - xmin)*p.plen + p.abxb
+			ey = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
+			p2d.fill(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
+			p2d.ellipse(p.wi, ex, ey, 3.5, 3.5)
+		end
+		p2d.fill(p.wi, 0, 0, 0, 1.0)
+	# data points w/o colors
+	else
+		p2d.fill(p.wi, 0, 0, 0, 1.0)
+		for c = 1:length(dg.data[:x])
+			ex = (dg.data[:x][c] - xmin)/(xmax - xmin)*p.plen + p.abxb
+			ey = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
+			p2d.ellipse(p.wi, ex, ey, 3.5, 3.5)
+		end
 	end
-	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
-	p2d.fill(p.wi, 0, 0, 0, 1.0)
 end
 
 function plotCurve(p, dg)
 	xmin = p.xlim[1]; xmax = p.xlim[2]
 	ymin = p.ylim[1]; ymax = p.ylim[2]
 
-	# curve connecting points
-	for c = 1:length(dg.data[:x])-1
-		lx1 = (dg.data[:x][c] - xmin)/(xmax - xmin)*p.plen + p.abxb
-		ly1 = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
-		lx2 = (dg.data[:x][c+1] - xmin)/(xmax - xmin)*p.plen + p.abxb
-		ly2 = -((dg.data[:y][c+1] - ymin)/(ymax - ymin)*p.phei - p.aby)
-		p2d.stroke(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
-		p2d.line(p.wi, lx1, ly1, lx2, ly2)
+	# curve connecting points w/ colors
+	if in(:rc, names(dg.data))
+		for c = 1:length(dg.data[:x])-1
+			lx1 = (dg.data[:x][c] - xmin)/(xmax - xmin)*p.plen + p.abxb
+			ly1 = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
+			lx2 = (dg.data[:x][c+1] - xmin)/(xmax - xmin)*p.plen + p.abxb
+			ly2 = -((dg.data[:y][c+1] - ymin)/(ymax - ymin)*p.phei - p.aby)
+			p2d.stroke(p.wi, dg.data[:rc][c], dg.data[:gc][c], dg.data[:bc][c], 1.0)
+			p2d.line(p.wi, lx1, ly1, lx2, ly2)
+		end
+		p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+	# curve connecting points w/o colors
+	else
+		p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+		for c = 1:length(dg.data[:x])-1
+			lx1 = (dg.data[:x][c] - xmin)/(xmax - xmin)*p.plen + p.abxb
+			ly1 = -((dg.data[:y][c] - ymin)/(ymax - ymin)*p.phei - p.aby)
+			lx2 = (dg.data[:x][c+1] - xmin)/(xmax - xmin)*p.plen + p.abxb
+			ly2 = -((dg.data[:y][c+1] - ymin)/(ymax - ymin)*p.phei - p.aby)
+			p2d.line(p.wi, lx1, ly1, lx2, ly2)
+		end
 	end
-	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
 end
 
-function drawAxisLabels(w, title, xlabel, ylabel, width, height, abxb, abxe, aby, orx, orye)
+function drawAxisLabels(w, title, xlabel, ylabel, width, height, abxb, abxe, aby, orx, orye, plen, phei)
 	p2d.stroke(w, 0.0, 0.0, 0.0, 1.0)
-	p2d.fill(w, 0.0, 0.0, 0.0, 1.0)
 
 	# title
-	p2d.text(w, title, width/2, 0.0727*height)
+	p2d.text(w, title, abxb + plen/2, 0.0727*height)
 
 	# x label
-	p2d.text(w, xlabel, width/2, 0.97*height)
+	p2d.text(w, xlabel, abxb + plen/2, 0.97*height)
 
 	# y label
-	p2d.text(w, ylabel, 0.04*width, height/2; angle=90)
+	p2d.text(w, ylabel, 0.04*width, orye + phei/2; angle=90)
 
 	# x axis
 	p2d.line(w, abxb, aby, abxe, aby)
@@ -102,16 +121,15 @@ end
 
 function drawAxisLabels(p::PlotFrame)
 	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
-	p2d.fill(p.wi, 0.0, 0.0, 0.0, 1.0)
 
 	# title
-	p2d.text(p.wi, p.title, p.wpx/2, 0.0727*p.hpx)
+	p2d.text(p.wi, p.title, p.abxb + p.plen/2, 0.0727*p.hpx)
 
 	# x label
-	p2d.text(p.wi, p.xlabel, p.wpx/2, 0.97*p.hpx)
+	p2d.text(p.wi, p.xlabel, p.abxb + p.plen/2, 0.97*p.hpx)
 
 	# y label
-	p2d.text(p.wi, p.ylabel, 0.04*p.wpx, p.hpx/2; angle=90)
+	p2d.text(p.wi, p.ylabel, 0.04*p.wpx, p.orye + p.phei/2; angle=90)
 
 	# x axis
 	p2d.line(p.wi, p.abxb, p.aby, p.abxe, p.aby)
@@ -122,7 +140,6 @@ end
 
 function drawTicks(p)
 	p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
-	p2d.fill(p.wi, 0.0, 0.0, 0.0, 1.0)
 
 	xmin = p.xlim[1]; xmax = p.xlim[2]
 	ymin = p.ylim[1]; ymax = p.ylim[2]
@@ -155,5 +172,39 @@ function drawTicks(p)
 		extents = p2d.textExtents(p.wi, yl)
 		tyc = ty-(extents[4]/2 + extents[2])
 		p2d.text(p.wi, string(round(y, 2)), 0.06*p.wpx, tyc)
+	end
+end
+
+function drawLegend{T<:Graph}(p, gs::Array{T})
+	p2d.fill(p.wi, 1.0, 1.0, 1.0, 1.0)
+
+	lx = 0.18*p.wpx
+	c = 0
+	for g in gs
+		for dg in g.dataGroups
+			extents = p2d.textExtents(p.wi, dg.legend.label)
+			ly = 0.1*p.hpx + c*(extents[4]-extents[2]) + 0.02*p.hpx
+			p2d.stroke(p.wi, 1.0, 1.0, 1.0, 1.0)
+			p2d.rect(p.wi, lx, ly-extents[4]+extents[2], extents[3]-extents[1], extents[4]-extents[2])
+			p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+			p2d.text(p.wi, dg.legend.label, lx, ly)
+			c += 1
+		end
+	end
+end
+
+function drawLegend(p, g)
+	p2d.fill(p.wi, 1.0, 1.0, 1.0, 1.0)
+
+	lx = 0.18*p.wpx
+	c = 0
+	for dg in g.dataGroups
+		extents = p2d.textExtents(p.wi, dg.legend.label)
+		ly = 0.1*p.hpx + c*(extents[4]-extents[2]) + 0.02*p.hpx
+		p2d.stroke(p.wi, 1.0, 1.0, 1.0, 1.0)
+		p2d.rect(p.wi, lx, ly-extents[4]+extents[2], extents[3]-extents[1], extents[4]-extents[2])
+		p2d.stroke(p.wi, 0.0, 0.0, 0.0, 1.0)
+		p2d.text(p.wi, dg.legend.label, lx, ly)
+		c += 1
 	end
 end

@@ -21,14 +21,14 @@ function plotData(p::PlotFrame, g::ScatterPlot, showLegend::Bool)
 			dg.markerType = goodSymbols[mod(x, length(goodSymbols))]
 		end
 
+		plotPoints(p, dg)
+
 		if showLegend
 			dgCount += 1
 			if dg.legend.label == "Data Group "
 				dg.legend.label = dg.legend.label*string(dgCount)
 			end
 		end
-
-		plotPoints(p, dg)
 	end
 end
 

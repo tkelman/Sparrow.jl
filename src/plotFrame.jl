@@ -34,7 +34,7 @@ end
 
 function PlotFrame(name::AbstractString, title, xlabel, ylabel, width, height)
 	w = p2d.screen(width, height)
-	p2d.createFont(w, "Courier", 20*(width/500))
+	p2d.createFont(w, "Arial", 13*(width/500))
 	p2d.background(w, 1.0, 1.0, 1.0, 1.0)
 
 	abxb = 0.18*width; abxe = 0.96*width
@@ -44,7 +44,7 @@ function PlotFrame(name::AbstractString, title, xlabel, ylabel, width, height)
 	plen = abxe - abxb
 	phei = aby - orye
 
-	drawAxisLabels(w, title, xlabel, ylabel, width, height, abxb, abxe, aby, orx, orye)
+	drawAxisLabels(w, title, xlabel, ylabel, width, height, abxb, abxe, aby, orx, orye, plen, phei)
 
 	return PlotFrame(w, name, PageSize(9, 9, "cm"), title, xlabel, ylabel, [NaN, NaN], [NaN, NaN], true, true, "tl", false, true, true, false, width, height, abxb, abxe, aby, aby, orye, orx, plen, phei)
 end
