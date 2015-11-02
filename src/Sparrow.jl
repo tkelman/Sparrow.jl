@@ -3,7 +3,7 @@
 module Sparrow
 
 using DataFrames, Colors, Cairo
-include(Pkg.dir()*"/Processing.jl/src/Processing2D.jl")
+include(Pkg.dir()*"/Processing/src/Processing2D.jl")
 const p2d = Processing2D
 
 export DataGroup, PlotFrame, Legend, PageSize
