@@ -18,7 +18,7 @@ include("colors.jl")
 include("symbols.jl")
 include("plotFrame.jl")
 include("datagroup.jl")
-include("aux.jl")
+include("auxiliary.jl")
 include("lineplot.jl")
 include("scatterplot.jl")
 
