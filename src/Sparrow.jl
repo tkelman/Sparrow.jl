@@ -2,11 +2,11 @@ VERSION >= v"0.4.0-dev+6521" && __precompile__()
 
 module Sparrow
 
-using Compat, DataFrames, Color
+using Compat, DataFrames, Colors
 
 export DataGroup, PlotFrame, Legend, PageSize
 export LinePlot
-export plot, lineplot
+export plot, lineplot, scatterplot
 
 scriptF = []; dataFs = String[]; sparrowD = []
 
@@ -29,6 +29,98 @@ include("plotFrame.jl")
 include("datagroup.jl")
 include("aux.jl")
 include("lineplot.jl")
+include("scatterplot.jl")
+
+type Grid
+	plotFrames::Vector{PlotFrame}
+	rows::Int
+	cols::Int
+	name::String
+	viewer::String
+	size::PageSize
+end
+
+Grid(ps::Vector{PlotFrame}, rows, cols) = Grid(ps, rows, cols, ps[1].name, ps[1].viewer, ps[1].size)
+
+function plot(g::Grid)
+	fid = open(scriptF, "w+")
+
+	println(fid, "name "*g.name)
+	println(fid, "viewer "*g.viewer)
+	println(fid, "page-size $(g.size.xscale)$(g.size.units)x$(g.size.yscale)$(g.size.units)")
+	println(fid, "setup-grid $(g.cols)x$(g.rows)")
+
+	rowc = 0
+	colc = 0
+	for pc = 1:length(g.plotFrames)
+		p = g.plotFrames[pc]
+		if pc == 1
+			println(fid, "inset grid:0,0")
+		else
+			colc += 1
+			if mod(colc, g.cols) == 0
+				colc = 0
+				rowc += 1
+			end
+			println(fid, "next-inset grid:$(colc),$(rowc)")
+		end
+
+		println(fid, "title "*p.title)
+		println(fid, "xlabel "*p.xlabel)
+		println(fid, "ylabel "*p.ylabel)
+
+		if p.legendInside
+			println(fid, "legend-inside "*p.legendPos)
+		end
+
+		findGraphLimits(p)
+
+		println(fid, "xrange $(p.xlim[1]):$(p.xlim[2])")
+		println(fid, "yrange $(p.ylim[1]):$(p.ylim[2])")
+
+		if p.topAxis
+			println(fid, "top major-num")
+		else
+			println(fid, "top off")
+		end
+
+		if p.leftAxis
+			println(fid, "left major-num")
+		else
+			println(fid, "left off")
+		end
+
+		if p.bottomAxis
+			println(fid, "bottom major-num")
+		else
+			println(fid, "bottom off")
+		end
+
+		if p.rightAxis
+			println(fid, "right major-num")
+		else
+			println(fid, "right off")
+		end
+
+		for gr in p.graphTypes
+			plotData(gr, p.showLegend, fid)
+		end
+	end
+
+	close(fid)
+	run(`ctioga2 -f $(scriptF)`)
+
+	if isfile(scriptF)
+		rm(scriptF)
+	end
+	for dataF in dataFs
+		if isfile(dataF)
+			rm(dataF)
+		end
+	end
+
+	dgCount = 0
+end
 
 function plot(p::PlotFrame)
 	fid = open(scriptF, "w+")
@@ -73,17 +165,23 @@ function plot(p::PlotFrame)
 		println(fid, "right off")
 	end
 
-	plotData(p.graphType, p.showLegend, fid)
+	for gr in p.graphTypes
+		plotData(gr, p.showLegend, fid)
+	end
 
 	close(fid)
 	run(`ctioga2 -f $(scriptF)`)
 
-	rm(scriptF)
-	for dataF in dataFs
-		rm(dataF)
+	if isfile(scriptF)
+		rm(scriptF)
 	end
-end
+	for dataF in dataFs
+		if isfile(dataF)
+			rm(dataF)
+		end
+	end
 
-plot(p::PlotFrame, dg::DataGroup) = plot(p, [dg])
+	dgCount = 0
+end
 
 end
