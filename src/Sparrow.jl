@@ -5,8 +5,8 @@ module Sparrow
 using Compat, DataFrames, Colors
 
 export DataGroup, PlotFrame, Legend, PageSize
-export LinePlot
-export plot, lineplot, scatterplot
+export LinePlot, ScatterPlot, XYZMap, Contour, XYParametric
+export plot, lineplot, scatterplot, xyzmap, contour, xyparametric
 
 scriptF = []; dataFs = String[]; sparrowD = []
 
@@ -30,6 +30,9 @@ include("datagroup.jl")
 include("aux.jl")
 include("lineplot.jl")
 include("scatterplot.jl")
+include("xyzmap.jl")
+include("contour.jl")
+include("xyparametric.jl")
 
 type Grid
 	plotFrames::Vector{PlotFrame}
@@ -40,9 +43,11 @@ type Grid
 	size::PageSize
 end
 
-Grid(ps::Vector{PlotFrame}, rows, cols) = Grid(ps, rows, cols, ps[1].name, ps[1].viewer, ps[1].size)
+Grid(ps::Vector{PlotFrame}, rows, cols) = Grid(ps, rows, cols, "sparrow", "open", PageSize(9, 9, "cm"))
 
 function plot(g::Grid)
+	global dgCount
+
 	fid = open(scriptF, "w+")
 
 	println(fid, "name "*g.name)
@@ -102,6 +107,14 @@ function plot(g::Grid)
 			println(fid, "right off")
 		end
 
+		if p.xlog
+			println(fid, "xlog true")
+		end
+
+		if p.ylog
+			println(fid, "ylog true")
+		end
+
 		for gr in p.graphTypes
 			plotData(gr, p.showLegend, fid)
 		end
@@ -123,6 +136,8 @@ function plot(g::Grid)
 end
 
 function plot(p::PlotFrame)
+	global dgCount
+
 	fid = open(scriptF, "w+")
 
 	println(fid, "name "*p.name)
@@ -163,6 +178,14 @@ function plot(p::PlotFrame)
 		println(fid, "right major-num")
 	else
 		println(fid, "right off")
+	end
+
+	if p.xlog
+		println(fid, "xlog true")
+	end
+
+	if p.ylog
+		println(fid, "ylog true")
 	end
 
 	for gr in p.graphTypes
